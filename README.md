@@ -1,6 +1,6 @@
 # Tops-Academic-Priyank
 
-[1] Welcome to the Tops-Academic repository! This repository is a collection of my academic work, including assignments, assessments, and projects. 
+[1] Welcome to the Tops-Academic-Priyank repository! This repository is a collection of my academic work, including assignments, assessments, and projects. 
 
 [2] The repository is organized into three main directories:
 
