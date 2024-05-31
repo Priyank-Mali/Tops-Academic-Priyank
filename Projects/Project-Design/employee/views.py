@@ -3,7 +3,6 @@ from functools import wraps
 from .models import Employee
 from django.contrib import messages
 
-from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -52,7 +51,7 @@ def login_required(view_func):
     # Return the wrapped view function
     return wrapped_view
 
-
+# --------employee login view------------
 def employee_login_view(request):
     if request.method=="POST":
         employee_id_ = request.POST["employee_id"]
@@ -80,18 +79,23 @@ def employee_login_view(request):
 
     return render(request,"employee/employee_loginpage.html")
 
+
+# --------employee Dashboard view------------
 @login_required
 def employee_home_view(request):
     return render(request,"employee/employee_dashboardpage.html")
 
+# --------employee Logout view------------
 @login_required
 def employee_logout_view(request):
     response = redirect("employee_login_view")
     response.delete_cookie("employee_id")
     response.delete_cookie("employee_name")
+    response.delete_cookie("password")
     messages.success(request,"You are Logged Out !!")
     return response
 
+# --------employee Change Password view------------
 @login_required
 def employee_change_password_view(request):
     get_employee = Employee.objects.get(employee_id=request.COOKIES.get("employee_id"))
