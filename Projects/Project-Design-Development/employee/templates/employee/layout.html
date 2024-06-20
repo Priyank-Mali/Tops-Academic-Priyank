@@ -43,10 +43,18 @@
                 <a class="nav-link active" aria-current="page" href="{% url "employee_home_view" %}">Dashboard</a>
               </li>
               {% if request.COOKIES.role == 'counsellor' %}
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url "employee_student_view" %}">Students</a>
-              </li>
-              {% endif %}
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="{% url "employee_student_view" %}">Students</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="">Batches</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="">MyBatches</a>
+                </li>
+                {% endif %}
+              
             </ul>
             <!-- Example single danger button -->
             <ul class="navbar-nav">

@@ -13,6 +13,7 @@ class Role(BaseModel):
     def __str__(self):
         return self.role
 
+
 class Employee(BaseModel):
     PRIFIX = "EMP"
     employee_id = models.CharField(primary_key=True,blank=True,max_length=255)
@@ -67,3 +68,5 @@ class Employee(BaseModel):
             #recipient_list
             
         super(Employee,self).save(*args,**kwargs)
+
+
