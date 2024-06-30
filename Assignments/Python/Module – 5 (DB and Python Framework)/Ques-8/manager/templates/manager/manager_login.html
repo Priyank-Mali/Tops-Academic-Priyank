@@ -1,0 +1,26 @@
+{% extends "master/login.html" %}
+
+{% block title %}
+Manager
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(45deg, #a18cd1, #fbc2eb);">
+  <form method="POST" action="" class="p-5 bg-white rounded shadow-lg" style="width: 100%; max-width: 400px; border-radius: 15px;">
+      {% csrf_token %}
+      <h2 class="text-center mb-4 text-primary text-primary ">Manager Login</h2>
+      <hr>
+      <div class="mb-4">
+          <label for="manager_id" class="form-label">Manager ID</label>
+          <input type="text" class="form-control" name="manager_id" placeholder="ADM000...." required>
+      </div>
+      <div class="mb-4">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" name="password" placeholder="******" required>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+          <button type="submit" class="btn btn-success w-100" style="font-weight: bold; padding: 10px;">Login</button>
+      </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,236 @@
+{% extends "manager/layout.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block style %}
+    img{
+        width:60px;
+    }
+    body {
+        background: linear-gradient(45deg, #a18cd1, #fbc2eb);
+        font-family: 'Roboto', sans-serif;
+    }
+{% endblock %}
+ 
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active " aria-current="page" href="{% url "manager_dashboard_view" %}">Dashboard</a>
+                </li> 
+                <li class="nav-item">
+                    <!-- Button trigger modal for add company -->
+                    <a class="nav-link active" data-bs-toggle="modal" data-bs-target="#addcompany" aria-current="page" href="">Add Company</a>
+                </li>  
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url "manager_logout_view" %}">Logout</a>
+                </li>  
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0"></ul>
+            </div>
+        </div>
+    </nav>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-dismissible fade show {% if message.tags == 'warning' %}alert-warning {% elif message.tags == 'error' %}alert-danger {% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+                {{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="mt-3">
+        <form action="" class="row g-3 align-items-center">
+            {% csrf_token %}
+            <!-- Button Add Products modal -->
+            <div class="col-auto">
+                <button type="button" class="btn btn-warning mx-auto" data-bs-toggle="modal" data-bs-target="#addproducts">
+                    Add Products
+                </button>
+            </div>
+            <div class="col-auto flex-grow-1">
+                <input class="form-control" name="search" type="search" placeholder="search by company / model name / ram / price" aria-label="Search">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" name="add_product" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+
+<table class="table table-bordered mt-3">
+    <thead  class="table-secondary">
+      <tr>
+        <th scope="col">NO</th>
+        <th scope="col">COMPANY</th>
+        <th scope="col">MODEL NAME</th>
+        <th scope="col">IMAGE</th>
+        <th scope="col">RAM</th>
+        <th scope="col">PRICE</th>
+        <th scope="col">ACTION</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
+        <tr>
+            <th>{{forloop.counter}}</th>
+            <td>{{product.company.name}}</td>
+            <td>{{product.model_name}}</td>
+            <td>
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="">
+                {% else %}
+                    No image available
+                {% endif %}
+            </td>
+            <td>{{product.ram}}</td>
+            <td>{{product.price}}</td>
+            <td>
+
+                {% comment %}  Edit Button {% endcomment %}
+                <div class="d-inline-block">
+                    <a href="" class="btn btn-warning" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editproducts{{product.id}}">Edit</a>
+                </div>
+                {% comment %} Modal for Edit Button {% endcomment %}
+                <div class="modal fade" id="editproducts{{product.id}}" tabindex="-1" aria-labelledby="editproducts{{product.id}}Label" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editproducts{{product.id}}">Edit Products</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{% url "manager_product_edit" id=product.id %}"  method="POST">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="company" class="form-label">Company:</label>
+                                        <input type="text" class="form-control" id="company" name="company" value="{{ product.company.name }}" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="model_name" class="form-label">Model Name:</label>
+                                        <input type="text" class="form-control" id="model_name" name="model_name" value="{{ product.model_name }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Image:</label>
+                                        <input type="file" class="form-control" id="image" name="image">
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" alt="Product Image" class="img-fluid mt-2" width="100">
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="ram" class="form-label">Ram:</label>
+                                        <input type="text" class="form-control" id="ram" name="ram" value="{{ product.ram }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="price" class="form-label">Price:</label>
+                                        <input type="number" class="form-control" id="price" name="price" value="{{ product.price }}">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% comment %}  Delete Button {% endcomment %}
+                <div class="d-inline-block">
+                    <a href="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#productDeleteModal{{product.id}}">Delete</a>
+                </div>
+                {% comment %} Modal for Delete Button {% endcomment %}
+                <div class="modal fade" id="productDeleteModal{{product.id}}" tabindex="-1" aria-labelledby="productDeleteModal{{product.id}}Label" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="productDeleteModal{{product.id}}">Are You Sure to delete?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{% url 'manager_product_delete' id=product.basemodel_ptr_id %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                                        <button type="submit" class="btn btn-success">Yes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                {% comment %} <!-- Delete Form Button -->
+                <div class="d-inline-block">
+                    <form action="{% url 'manager_product_delete' id=product.basemodel_ptr_id %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </form>
+                </div> {% endcomment %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if products.has_other_pages %}
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% for i in products.paginator.page_range %}
+            <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+        {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+    {% comment %} My modals {% endcomment %}
+
+    <!-- Modal for add company -->
+    <div class="modal fade" id="addcompany" tabindex="-1" aria-labelledby="addcompanyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addcompanyLabel">Add Mobile Company</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {{company_form.as_p}}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Add Products-->
+    <div class="modal fade" id="addproducts" tabindex="-1" aria-labelledby="addproductsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addproductsLabel">ADD PRODUCTS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{product_form.as_p}}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Add Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

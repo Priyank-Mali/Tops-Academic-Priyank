@@ -1,0 +1,23 @@
+{% extends "master/login.html" %}
+
+{% block title %}
+Customer
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(45deg, #00c9ff, #92fe9d);">
+    <form method="POST" action="" class="p-5 bg-white rounded shadow-lg" style="width: 100%; max-width: 400px; border-radius: 15px;">
+        {% csrf_token %}
+        <h3 class="text-center mb-4 text-primary">Customer Registration</h3>
+        <hr>
+        {{customer_form.as_p}}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <button type="submit" class="btn btn-primary w-100" style="font-weight: bold; padding: 10px;">Register</button>
+        </div>
+        <div class="text-center">
+            <p class="mb-0">Already Have Account?</p>
+            <a href="{% url "customer_login_view" %}" class="text-primary" style="text-decoration: none; font-weight: bold;">Login</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

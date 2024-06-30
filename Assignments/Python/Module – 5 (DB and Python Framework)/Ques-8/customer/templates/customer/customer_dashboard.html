@@ -1,0 +1,70 @@
+{% extends "manager/layout.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block style %}
+    img{
+        width:60px;
+    }
+    body {
+        background: linear-gradient(45deg, #00c9ff, #92fe9d);
+        font-family: 'Roboto', sans-serif;
+    }
+{% endblock %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-dismissible fade show {% if message.tags == 'warning' %}alert-warning {% elif message.tags == 'error' %}alert-danger {% elif message.tags == 'success' %}alert-success{% endif %}" role="alert">
+                {{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="mt-3">
+        <form action="" class="row g-3 align-items-center">
+            <div class="col-auto">
+                <a href="{% url "customer_logout_view" %}" class="btn btn-danger">Logout</a>
+            </div>
+            {% csrf_token %}
+            <div class="col-auto flex-grow-1">
+                <input class="form-control" name="search" type="search" placeholder="search by company / model name / ram / price" aria-label="Search">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" name="add_product" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+    <table class="table table-bordered mt-3">
+        <thead  class="table-secondary">
+        <tr>
+            <th scope="col">NO</th>
+            <th scope="col">COMPANY</th>
+            <th scope="col">MODEL NAME</th>
+            <th scope="col">IMAGE</th>
+            <th scope="col">RAM</th>
+            <th scope="col">PRICE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <th>{{forloop.counter}}</th>
+                <td>{{product.company.name}}</td>
+                <td>{{product.model_name}}</td>
+                <td>
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="">
+                    {% else %}
+                        No image available
+                    {% endif %}
+                </td>
+                <td>{{product.ram}}</td>
+                <td>{{product.price}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

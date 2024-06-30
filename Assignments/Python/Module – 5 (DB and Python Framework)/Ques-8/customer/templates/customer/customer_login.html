@@ -1,0 +1,30 @@
+{% extends "master/login.html" %}
+
+{% block title %}
+Customer
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(45deg, #00c9ff, #92fe9d);">
+    <form method="POST" action="" class="p-5 bg-white rounded shadow-lg" style="width: 100%; max-width: 400px; border-radius: 15px;">
+        {% csrf_token %}
+        <h3 class="text-center mb-4 text-primary">Customer Login</h3>
+        <hr>
+        <div class="mb-4">
+            <label for="username" class="form-label">Email ID</label>
+            <input type="email" class="form-control" name="email" placeholder=".......@gmail.com" required>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="******" required>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <button type="submit" class="btn btn-primary w-100" style="font-weight: bold; padding: 10px;">Login</button>
+        </div>
+        <div class="text-center">
+            <p class="mb-0">Don't Have an Account?</p>
+            <a href="{% url "customer_registration_view" %}" class="text-primary" style="text-decoration: none; font-weight: bold;">Register Here</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
