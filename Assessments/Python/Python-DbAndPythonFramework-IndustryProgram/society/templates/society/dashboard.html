@@ -1,0 +1,58 @@
+{% extends "society/layout.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block style %}
+   
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card border-dark mb-3 mt-3">
+            <div class="card-header text-danger">Members</div>
+            <div class="card-body text-dark">
+                <h5 class="card-title">Total Members: <span class="badge bg-primary">{{members}}</span></h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-dark mb-3 mt-3">
+            <div class="card-header text-danger">Watchmen</div>
+            <div class="card-body text-dark">
+                <h5 class="card-title">Total Watchmen: <span class="badge bg-primary">{{watchmens}}</span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card border-dark mb-3 mt-3">
+            <div class="card-header text-danger">Notices</div>
+            <div class="card-body text-dark">
+                <h5 class="card-title">Total Notices: <span class="badge bg-danger">{{notices}}</span></h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-dark mb-3 mt-3">
+            <div class="card-header text-danger">Events</div>
+            <div class="card-body text-dark">
+                <h5 class="card-title">Total Events: <span class="badge bg-danger">{{events}}</span></h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-dark mb-3 mt-3">
+            <div class="card-header text-danger">Visitors</div>
+            <div class="card-body text-dark">
+                <h5 class="card-title">Total Visitor: <span class="badge bg-danger">{{visitors}}</span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

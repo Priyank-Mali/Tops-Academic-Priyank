@@ -1,0 +1,36 @@
+{% extends "society/layout.html" %}
+
+{% block title %}
+Notice
+{% endblock %}
+
+{% block style %}
+md-1{
+    background-color : gray;
+}
+.card-img-top{
+    height : 200px;
+}
+{% endblock %}
+
+{% block content %}
+
+<div class="card-group mt-2">
+    {% if notices %}
+    {% for notice in notices %}
+        <div class="card mt-2 mx-1">
+            <img src="{{notice.image.url}}" class="card-img-top" alt="{{notice.notice_title}}">
+            <div class="card-body">
+                <h5 class="card-title text-danger text-decoration-underline">{{notice.notice_title |capfirst}}</h5>
+                <p class="card-text">{{notice.notice_descriptions}}</p>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Last updated {{notice.created_at}}</small>
+            </div>
+        </div>
+    {% endfor %}
+    {% else %}
+    <div class="card text-center text-danger">No Notice</div>
+    {% endif %}
+</div>
+{% endblock %}

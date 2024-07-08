@@ -1,0 +1,99 @@
+{% extends "society/layout.html" %}
+
+{% block title %}
+Members
+{% endblock %}
+
+{% block content %}
+<form class="d-flex flex-column flex-md-row align-items-center mt-3">
+  {% comment %} Add Members Button {% endcomment %}
+  <div class="mb-2 mb-md-0 me-md-2">
+    <a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addmembers" href="">ADD MEMBERS</a>
+  </div>
+
+  <!-- Search Form -->
+  
+  <div class="d-flex flex-grow-1">
+    <input class="form-control search-input me-2" name="search" type="search" placeholder="Search by member ID / name / email / mobile" aria-label="Search">
+    <button class="btn btn-success" type="submit">Search</button>
+  </div>
+</form>
+
+
+{% comment %}  Modal for add members {% endcomment %}
+  <div class="modal fade" id="addmembers" tabindex="-1" aria-labelledby="addmembersLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addmembersLabel">Add Members</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="post">
+            {% csrf_token %}
+              {{member_form.as_p}}
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-success">Add</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<table class="table table-bordered mt-4 ">
+    <thead class="table-secondary">
+      <tr>
+        <th scope="col">Member ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Mobile</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+      <tr>
+        <th>{{member.member_id}}</th>
+        <td>{{member.first_name}} {{member.last_name}}</td>
+        {% if member.email %}
+        <td>{{member.email}}</td>
+        {% else %}
+        <td>Not Defined</td>
+        {% endif %}
+        {% if member.mobile %}
+        <td>{{member.mobile}}</td>
+        {% else %}
+        <td class="text-danger">Not Defined</td>
+        {% endif %}
+        <td>
+          {% comment %} button for delete member {% endcomment %}
+            <a href="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletemember{{member.member_id}}">Delete</a>
+            {% comment %}  Modal for delete member {% endcomment %}
+            <div class="modal fade" id="deletemember{{member.member_id}}" tabindex="-1" aria-labelledby="deletemember{{member.member_id}}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deletemember{{member.member_id}}">Are you Sure to delete {{member.first_name}} {{member.last_name}} ?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="{% url "member_delete_view" member_id=member.member_id %}" method="post">
+                      {% csrf_token %}
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

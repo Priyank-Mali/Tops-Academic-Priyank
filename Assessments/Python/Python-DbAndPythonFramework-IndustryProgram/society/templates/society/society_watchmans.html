@@ -1,0 +1,89 @@
+{% extends "society/layout.html" %}
+
+{% block title %}
+Watchman
+{% endblock %}
+
+{% block content %}
+{% comment %} button for add watchmen {% endcomment %}
+<div class="mb-2 mb-md-0 me-md-2 mt-3">
+  <a class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addwatchmen" href="">ADD WATCHMEN</a>
+</div>
+{% comment %}  Modal for add members {% endcomment %}
+<div class="modal fade" id="addwatchmen" tabindex="-1" aria-labelledby="addwatchmenLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addwatchmenLabel">Add Watchmen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post">
+          {% csrf_token %}
+            {{watchmen_form.as_p}}
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<table class="table table-bordered mt-4 ">
+    <thead class="table-secondary">
+      <tr>
+        <th scope="col">Watchman ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Mobile</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for watchman in watchmans %}
+      <tr>
+        <th>{{watchman.watchman_id}}</th>
+        <td>{{watchman.first_name}} {{watchman.last_name}}</td>
+        {% if watchman.email %}
+        <td>{{watchman.email}}</td>
+        {% else %}
+        <td>Note Defined</td>
+        {% endif %}
+        {% if watchman.mobile %}
+        <td>{{watchman.mobile}}</td>
+        {% else %}
+        <td class="text-danger">Note Defined</td>
+        {% endif %}
+        <td>
+            {% comment %} delete button for watchman {% endcomment %}
+            <a href="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletewatchman{{watchman.watchman_id}}" >Delete</a>
+          
+            {% comment %} delete Modal for watchman {% endcomment %}
+            <div class="modal fade" id="deletewatchman{{watchman.watchman_id}}" tabindex="-1" aria-labelledby="deletewatchman{{watchman.watchman_id}}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deletewatchman{{watchman.watchman_id}}">Are you sure to delete ?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="{% url "watchman_delete_view" watchmen_id=watchman.watchman_id %}" method="post">
+                      {% csrf_token %}
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a href="" class="btn btn-warning">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

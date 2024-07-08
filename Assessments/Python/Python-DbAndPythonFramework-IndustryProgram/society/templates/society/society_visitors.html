@@ -1,0 +1,36 @@
+{% extends "society/layout.html" %}
+
+{% block title %}
+Visitors
+{% endblock %}
+
+
+{% block content %}
+
+<table class="table table-bordered mt-3">
+    <thead class="table-secondary">
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Name</th>
+        <th scope="col">Contact</th>
+        <th scope="col">Entry Time</th>
+        <th scope="col">Exit Time</th>
+        <th scope="col">Address</th>
+        <th scope="col">City</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for visitor in visitors %}
+      <tr>
+        <th>{{visitor.entry_time|date:"d-m-y"}}</th>
+        <th>{{visitor.first_name}} {{visitor.last_name}}</th>
+        <td>{{visitor.contact}}</td>
+        <td>{{visitor.entry_time|date:"H:i:s"}}</td>
+        <td>{{visitor.exit_time|date:"H:i:s" }}</td>
+        <td>{{visitor.address}}</td>
+        <td>{{visitor.city}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

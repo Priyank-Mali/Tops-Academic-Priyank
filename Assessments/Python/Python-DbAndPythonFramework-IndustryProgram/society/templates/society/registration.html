@@ -1,0 +1,120 @@
+{% extends "society/login.html" %}
+
+{% block title %}
+Registration
+{% endblock %}
+
+{% block content %}
+      <form action="" method="post" class="col-6 mx-auto mt-5 card p-3" name="frm" onsubmit="return validateForm();">
+        {% csrf_token %}
+        <h3>Digital Society Registration</h3>
+        <div class="mb-3">
+          <label for="role" class="form-label">Role:</label>
+          <select name="role" id="role" class="form-select" required>
+            <option value="">--select--</option>
+            <option value="chairman">Chairman</option>
+            <option value="member">Member</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="first_name" class="form-label">First Name:</label>
+          <input type="text" name="first_name" id="first_name" class="form-control" onblur="check_first_name();" required>
+          <span id="error_first_name" style="color:red;"></span>
+        </div>
+        <div class="mb-3">
+          <label for="last_name" class="form-label">Last Name:</label>
+          <input type="text" name="last_name" id="last_name" class="form-control" onblur="check_last_name();" required>
+          <span id="error_last_name" style="color:red;"></span>
+        </div>
+        <div class="mb-3">
+          <label for="contact" class="form-label">Contact:</label>
+          <input type="text" name="contact" id="contact" class="form-control" onblur="check_contact();" required>
+          <span id="error_contact" style="color:red;"></span>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email:</label>
+          <input type="email" name="email" id="email" class="form-control" onblur="check_email();" required>
+          <span id="error_email" style="color:red;"></span>
+        </div>
+        <div class="mb-3 text-center">
+          <input type="submit" value="Submit" class="btn btn-primary">
+        </div>
+        <div class="mb-3 text-center">
+            <p>already have account?</p>
+          <a href="{% url "login_view" %}">Login</a>
+        </div>
+      </form>
+    </div>
+    <script>
+        function check_first_name() {
+            var fname = document.frm.first_name.value;
+            var reg = /^[A-Za-z]+$/;
+            if (fname.trim() == "") {
+                document.getElementById("error_first_name").innerHTML = "Please enter your first name";
+                return false;
+            } else if (!reg.test(fname)) {
+                document.getElementById("error_first_name").innerHTML = "Please enter only alphabets";
+                return false;
+            } else {
+                document.getElementById("error_first_name").innerHTML = "";
+                return true;
+            }
+        }
+
+        function check_last_name() {
+            var lname = document.frm.last_name.value;
+            var reg = /^[A-Za-z]+$/;
+            if (lname.trim() == "") {
+                document.getElementById("error_last_name").innerHTML = "Please enter your last name";
+                return false;
+            } else if (!reg.test(lname)) {
+                document.getElementById("error_last_name").innerHTML = "Please enter only alphabets";
+                return false;
+            } else {
+                document.getElementById("error_last_name").innerHTML = "";
+                return true;
+            }
+        }
+
+        function check_contact() {
+            var con = document.frm.contact.value;
+            var reg = /^[0-9]+$/;
+            if (con.trim() == "") {
+                document.getElementById("error_contact").innerHTML = "Please enter your contact";
+                return false;
+            } else if (!reg.test(con)) {
+                document.getElementById("error_contact").innerHTML = "Please enter only digits";
+                return false;
+            } else {
+                document.getElementById("error_contact").innerHTML = "";
+                return true;
+            }
+        }
+
+        function check_email() {
+            var email = document.frm.email.value;
+            var reg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (email.trim() == "") {
+                document.getElementById("error_email").innerHTML = "Please enter your email";
+                return false;
+            } else if (!reg.test(email)) {
+                document.getElementById("error_email").innerHTML = "Please enter a valid email";
+                return false;
+            } else {
+                document.getElementById("error_email").innerHTML = "";
+                return true;
+            }
+        }
+
+        function validateForm() {
+            var valid = true;
+            valid = check_first_name() && valid;
+            valid = check_last_name() && valid;
+            valid = check_contact() && valid;
+            valid = check_email() && valid;
+            return valid;
+        }
+    </script>
+    {% endblock %}
+ </body>
+</html>

@@ -1,0 +1,37 @@
+{% extends "society/layout.html" %}
+
+{% block title %}
+Event
+{% endblock %}
+
+{% block style %}
+md-1{
+    background-color : gray;
+}
+.card-img-top{
+    height : 200px;
+}
+{% endblock %}
+
+{% block content %}
+{% if events %}
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-1">
+    {% for event in events %}
+    <div class="col">
+      <div class="card h-100">
+        <img src="{{event.image.url}}" class="card-img-top" alt="{{event.event_title}}">
+        <div class="card-body">
+          <h5 class="card-title text-danger text-decoration-underline">{{event.event_topic}}</h5>
+          <p class="card-text">{{event.event_description}}</p>
+        </div>
+        <div class="card-footer">
+          <small class="text-muted">Last updated {{event.created_at}}</small>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="card text-center text-danger mt-3">No Events</div>
+    {% endif %}
+</div>
+{% endblock %}

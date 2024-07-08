@@ -1,0 +1,42 @@
+{% extends "society/layout.html" %}
+
+{% block title %}
+Profile
+{% endblock %}
+
+{% block content %}
+<ul class="list-group mt-3">
+    <li class="list-group-item">Role: <b class="text-danger">@{{request.COOKIES.role}}</b></li>
+    <li class="list-group-item">Name: <b class="text-dark">{{data.first_name}} {{data.last_name}}</b></li>
+    <li class="list-group-item">Email: <b class="text-dark">{{data.email}} </b></li>
+    {% if request.COOKIES.mobile %}
+    <li class="list-group-item">Mobile: <b class="text-dark">{{data.mobile}}</b></li>
+    {% else %}
+    <li class="list-group-item">Mobile: <span class="text-danger"><b class="text-danger">Not Added</b></span></li>
+    {% endif %}
+    <li class="list-group-item"><a href="" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editprofile">Edit Profile</a></li>
+  </ul>
+
+  <!-- Modal -->
+<div class="modal fade" id="editprofile" tabindex="-1" aria-labelledby="editprofileLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editprofileLabel">Edit Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="" method='post'>
+            {% csrf_token %}
+            {{form.as_p}}
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success">Save changes</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
