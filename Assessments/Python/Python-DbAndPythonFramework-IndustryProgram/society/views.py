@@ -3,7 +3,7 @@ from django.contrib import messages
 from functools import wraps
 
 from .models import Chairmans,Members,Watchmans,Notice,Event,Visitors,Role
-from .forms import MembersForm,WatchmenForm,ChairmanForm
+from .forms import MembersForm,WatchmenForm,ChairmanForm,VisitorsForm
 
 
 from django.core.mail import send_mail
@@ -14,7 +14,7 @@ import os
 def login_required(function):
     @wraps(function)
     def wrapped_func(request,*args,**kwargs):
-        if (request.COOKIES.get('chairman_id') and request.COOKIES.get('role')) or (request.COOKIES.get('role') and request.COOKIES.get('member_id')):
+        if (request.COOKIES.get('chairman_id') and request.COOKIES.get('role')) or (request.COOKIES.get('role') and request.COOKIES.get('member_id')) or (request.COOKIES.get('role') and request.COOKIES.get('watchman_id')):
             return function(request,*args,**kwargs)
         else:
             messages.warning(request,'Cookies are Expire !!')
@@ -27,39 +27,45 @@ def login_view(request):
         email_ = request.POST.get('email')
         password_ = request.POST.get('password')
         try:
-            chairman_object = Chairmans.objects.get(email = email_)
-            if chairman_object.password == password_:
-                response = redirect('dashboard_view')
-                response.set_cookie('chairman_id',chairman_object.chairman_id)
-                response.set_cookie('role',chairman_object.role)
-                response.set_cookie('name',f'{chairman_object.first_name} {chairman_object.last_name}')
-                response.set_cookie('email',chairman_object.email)
-                response.set_cookie('mobile',chairman_object.mobile)
-                messages.success(request,'Loging Successfully')
-                return response
-            else:
-                messages.error(request,'email or password does\'t\' match')
-            
-        except Chairmans.DoesNotExist:
-            messages.error(request,'Id not Exists')
+            chairman_object = Chairmans.objects.filter(email = email_).first()
+            if chairman_object:
+                if chairman_object.password == password_:
+                    response = redirect('dashboard_view')
+                    response.set_cookie('chairman_id',chairman_object.chairman_id)
+                    response.set_cookie('role',chairman_object.role)
+                    response.set_cookie('name',f'{chairman_object.first_name} {chairman_object.last_name}')
+                    messages.success(request,'Loging Successfully')
+                    return response
+                else:
+                    messages.error(request,'email or password does\'t\' match')
 
-        try:
-            member_object = Members.objects.get(email = email_)
-            if member_object.password == password_:
+            member_object = Members.objects.filter(email = email_).first()
+            if member_object:
+                if member_object.password == password_:
                     response = redirect('dashboard_view')
                     response.set_cookie('name',f'{member_object.first_name} {member_object.last_name}')
                     response.set_cookie('role',member_object.role)
                     response.set_cookie('member_id',member_object.member_id)
                     return response
-            else:
-                messages.error(request,'email or password does\'t\' match')
+                else:
+                    messages.error(request,'email or password does\'t\' match')
             
-        except Members.DoesNotExist:
-            messages.error(request,'Id not Exists')
-            
+            watchman_object = Watchmans.objects.filter(email=email_).first()
+            if watchman_object:
+                if watchman_object.password == password_:
+                    response = redirect('dashboard_view')
+                    response.set_cookie('name',f'{watchman_object.first_name} {watchman_object.last_name}')
+                    response.set_cookie('role',watchman_object.role)
+                    response.set_cookie('watchman_id',watchman_object.watchman_id)
+                    return response
+                else:
+                    messages.error(request,'email or password does\'t\' match')
+
+            messages.error(request,'Email not found')
+
         except Exception as e:
             messages.error(request,e)
-
+    
     return render(request,'society/login.html')
 
 
@@ -93,6 +99,7 @@ def profile_view(request):
                 return redirect('profile_view')
             else:
                 form = ChairmanForm()
+
     elif request.COOKIES.get('role') == 'member':
         data = Members.objects.get(member_id = request.COOKIES.get('member_id'))
         form = MembersForm(instance=data)
@@ -104,6 +111,19 @@ def profile_view(request):
                 return redirect('profile_view')
             else:
                 form = MembersForm()
+
+    elif request.COOKIES.get('role') == 'watchman':
+        data = Watchmans.objects.get(watchman_id=request.COOKIES.get('watchman_id'))
+        form = WatchmenForm(instance=data)
+        if request.method=='POST':
+            form = WatchmenForm(request.POST,instance=data)
+            if form.is_valid():
+                form.save()
+                messages.success(request,'Update Successfully')
+                return redirect('profile_view')
+            else:
+                form = WatchmenForm()
+        
     context = {
         'form' : form,
         'data' : data
@@ -207,9 +227,18 @@ def watchman_delete_view(request,watchmen_id):
 
 @login_required
 def visitors_view(request):
+    form = VisitorsForm()
+    if request.method=='POST':
+        form = VisitorsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request,'Entry added')
+        messages.error(request,'Somthing Went Wrong')
+    
     visitors = Visitors.objects.all()
     context = {
-        'visitors' : visitors
+        'visitors' : visitors,
+        'form' : form
     }
     return render(request,'society/society_visitors.html',context)
 

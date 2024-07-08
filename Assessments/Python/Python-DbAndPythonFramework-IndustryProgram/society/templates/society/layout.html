@@ -54,7 +54,7 @@
                 <li class="nav-item mx-4">
                   <a class="nav-link active fs-5" aria-current="page" href="{% url "event_view" %}">Event</a>
                 </li>
-                {% elif request.COOKIES.role == 'watchmen' %}
+                {% elif request.COOKIES.role == 'watchman' %}
                 <li class="nav-item mx-4">
                   <a class="nav-link active fs-5" aria-current="page" href="{% url "notice_view" %}">Notice</a>
                 </li>
@@ -64,6 +64,7 @@
                 <li class="nav-item mx-4">
                   <a class="nav-link active fs-5" aria-current="page" href="{% url "visitors_view" %}">Visitor</a>
                 </li>
+                {% endif %}
                 </ul>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                   <li class="nav-item dropdown">

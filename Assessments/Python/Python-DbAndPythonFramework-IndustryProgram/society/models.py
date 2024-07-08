@@ -79,7 +79,9 @@ class Members(AttributesModel):
 
 class Watchmans(AttributesModel):
     PRIFIX = 'WATC'
+    role = models.ForeignKey(Role,on_delete=models.CASCADE)
     watchman_id = models.CharField(max_length=255,blank=True,primary_key=True)
+    password = models.CharField(max_length=20,blank=True)
 
     def save(self,*args,**kwargs):
         if not self.pk:
@@ -92,6 +94,7 @@ class Watchmans(AttributesModel):
                 new_id = f'{self.PRIFIX}0001'
             
             self.watchman_id = new_id
+            self.password = generate_password()
 
         super(Watchmans,self).save(*args,**kwargs)
 

@@ -7,6 +7,34 @@ Visitors
 
 {% block content %}
 
+{% if request.COOKIES.role == 'watchman' %}
+<!-- Button trigger modal for visitor -->
+<button type="button" class="btn btn-dark mt-3" data-bs-toggle="modal" data-bs-target="#addvisitors">
+  ADD VISITOR
+</button>
+
+<!-- Modal for visitors -->
+<div class="modal fade" id="addvisitors" tabindex="-1" aria-labelledby="addvisitorsLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addvisitorsLabel">Visitors List</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method='POST'>
+          {% csrf_token %}
+          {{form.as_p}}
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">CLOSE</button>
+            <button type="submit" class="btn btn-success">ADD</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
 <table class="table table-bordered mt-3">
     <thead class="table-secondary">
       <tr>
