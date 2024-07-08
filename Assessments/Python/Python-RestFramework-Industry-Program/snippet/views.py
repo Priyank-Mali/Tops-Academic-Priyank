@@ -20,7 +20,7 @@ def snippet_list(request):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
-@api_view(['GET','PUT','PATCH','DELETE'])
+@api_view(['GET','PUT','DELETE'])
 def snippet_details(request,pk):
 
     try:
@@ -40,9 +40,6 @@ def snippet_details(request,pk):
             return Response({'serializer':serializer,'profile':snippetQueryset})
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method=='PATCH':
-        pass
-
     elif request.method=='DELETE':
         snippetQueryset.delete()
         return Response(status=status.HTTP_410_GONE)
