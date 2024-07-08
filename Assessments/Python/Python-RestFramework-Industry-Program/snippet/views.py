@@ -22,6 +22,7 @@ def snippet_list(request):
     
 @api_view(['GET','PUT','PATCH','DELETE'])
 def snippet_details(request,pk):
+
     try:
         snippetQueryset = Snippets.objects.get(pk=pk)
     except Snippets.DoesNotExist:
@@ -36,7 +37,7 @@ def snippet_details(request,pk):
         serializer = SnippetsSerializer(snippetQueryset,data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response({'serializer':serializer,'profile':snippetQueryset})
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
     elif request.method=='PATCH':
@@ -48,23 +49,3 @@ def snippet_details(request,pk):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
-# from .forms import SnippetForm
-# from django.shortcuts import render
-# from django.http import HttpResponse
-
-# def form(request):
-#     get_data = Snippets.objects.get(pk=1)
-#     if request.method=='POST':
-#         form = SnippetForm(request.POST,instance=get_data)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponse('Done')
-#         else:
-#             return HttpResponse('Error')
-#     else:
-#         form = SnippetForm(instance=get_data)
-#     context = {
-#         'form' : form
-#     }
-#     return render(request,'snippet/base.html',context)
