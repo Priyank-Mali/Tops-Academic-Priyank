@@ -16,10 +16,10 @@ class MembersForm(forms.ModelForm):
 class WatchmenForm(forms.ModelForm):
     class Meta:
         model = Watchmans
-        fields = ['first_name' , 'last_name' , 'email' , 'mobile']
+        fields = ['role','first_name' , 'last_name' , 'email' , 'mobile']
 
 
 class VisitorsForm(forms.ModelForm):
     class Meta:
         model = Visitors
-        fields = '__all__'
+        exclude = ['exit_time']

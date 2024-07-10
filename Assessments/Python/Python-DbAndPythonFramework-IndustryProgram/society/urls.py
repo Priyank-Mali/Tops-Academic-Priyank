@@ -16,5 +16,6 @@ urlpatterns = [
     path('change-password/',views.change_password,name="change_password"),
     path('registration/',views.registration,name="registration"),
     path('forgot-password/',views.forget_password,name="forget_password"),
+    path('edit-watchman/<watchman_id>/',views.watchman_update_view,name="watchman_update_view"),
 
 ]

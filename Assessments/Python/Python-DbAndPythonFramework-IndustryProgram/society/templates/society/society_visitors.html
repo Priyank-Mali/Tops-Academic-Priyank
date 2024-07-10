@@ -54,7 +54,19 @@ Visitors
         <th>{{visitor.first_name}} {{visitor.last_name}}</th>
         <td>{{visitor.contact}}</td>
         <td>{{visitor.entry_time|date:"H:i:s"}}</td>
-        <td>{{visitor.exit_time|date:"H:i:s" }}</td>
+        {% if visitor.exit_time %}
+          <td>{{visitor.exit_time|date:"H:i:s"}}</td>
+        {% comment %} {% else %}
+          <form action="" method='POST'>
+            {% csrf_token %}
+            <td>
+              <input type="time" name="exit_time">
+              <input type="submit" value="submit" id="">
+            </td>
+          </form> {% endcomment %}
+        {% else %}
+        <td>12:00:00</td>
+        {% endif %}
         <td>{{visitor.address}}</td>
         <td>{{visitor.city}}</td>
       </tr>

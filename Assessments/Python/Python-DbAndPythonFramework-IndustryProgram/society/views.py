@@ -230,10 +230,15 @@ def visitors_view(request):
     form = VisitorsForm()
     if request.method=='POST':
         form = VisitorsForm(request.POST)
+        # exit_time_ = request.POST.get('exit_time')
         if form.is_valid():
             form.save()
             messages.success(request,'Entry added')
+        # elif exit_time_:
+        #     pass
+
         messages.error(request,'Somthing Went Wrong')
+
     
     visitors = Visitors.objects.all()
     context = {
@@ -335,3 +340,31 @@ def forget_password(request):
         except Exception as e:
             messages.error(request,e)
     return render(request,'society/forgot_password.html')
+
+
+def watchman_update_view(request,watchman_id):
+    watchman_object = Watchmans.objects.get(watchman_id=watchman_id)
+    if request.method=='POST':
+        first_name_ = request.POST.get('first_name')
+        last_name_ = request.POST.get('last_name')
+        email_ = request.POST.get('email')
+        mobile_ = request.POST.get('mobile')
+
+        if first_name_:
+            watchman_object.first_name = first_name_
+        
+        if last_name_:
+            watchman_object.last_name = last_name_
+        
+        if email_:
+            watchman_object.email = email_
+
+        if mobile_:
+            watchman_object.mobile = mobile_
+
+        watchman_object.save()
+        messages.success(request,'update successfully')
+        return redirect('watchmans_view')
+
+    else:
+        messages.error(request,'somthig went wrong')
