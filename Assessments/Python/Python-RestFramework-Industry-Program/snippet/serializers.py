@@ -4,4 +4,4 @@ from .models import Snippets
 class SnippetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snippets
-        fields = '__all__'
+        fields = ['title', 'code' , 'linenos' , 'language' , 'style' ]
