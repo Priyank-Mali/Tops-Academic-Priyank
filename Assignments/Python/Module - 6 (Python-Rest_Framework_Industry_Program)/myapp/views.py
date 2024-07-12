@@ -48,7 +48,7 @@ def book_details(request,pk):
             "payload" : serializer.data
         })
     
-    #  The PUT method is used to update a resource completely. It requires the entire object to be updated.
+    #  The PUT method is used to update a resource completely. 
     elif request.method=='PUT':
         serializer = BookSerializer(bookqueryset,data=request.data)
         if serializer.is_valid():
@@ -63,7 +63,7 @@ def book_details(request,pk):
             "error" : serializer.errors
         })
     
-    # The PATCH method is used to update a resource partially. It allows you to send only the fields that need to be updated.
+    # The PATCH method is used to update a resource partially.
     elif request.method=='PATCH':
         serializer = BookSerializer(bookqueryset,data=request.data,partial=True)
         if serializer.is_valid():
