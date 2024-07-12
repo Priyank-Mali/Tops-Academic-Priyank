@@ -1,0 +1,65 @@
+{% extends 'employee/layout.html' %}
+
+{% block title %}
+MyBatch
+{% endblock %}
+
+{% block content %}
+<div class="container my-3">
+    <table class="table table-dark">
+        <thead>
+            <tr>
+                <th scope="col">Batch name</th>
+                <th scope="col">Start/End date</th>
+                <th scope="col">Students</th>
+                <th scope="col">Global Note</th>
+            </tr>
+        </thead>
+    </table>
+    
+    <div class="row border mx-auto rounded my-2 p-3">
+        <div class="col-lg-3 col-md-3 p-3 text-break bg-light">
+            {{batch}}
+        </div>
+        <div class="col-lg-3 col-md-3 p-3 text-break">
+            <p>{{batch.start_date}} / {{batch.end_date}}</p>
+        </div>
+        <div class="col-lg-4 col-md-4 p-3 text-break">
+            <ul class="list-unstyled">
+                {% for student in students %}
+                <ul type="square">
+                    <li>{{student.student_id.first_name |capfirst}} {{student.student_id.last_name | capfirst}} ({{student.student_id_id}})</li>
+                </ul>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-lg-2 col-md-2">
+            <a href="" class="btn btn-dark">Add Global Note</a>
+        </div>
+    </div>
+    <p class="text-danger">Global Notes:</p>
+    <table class="table">
+        <thead class="bg-dark text-white">
+            <tr>
+                <th scope="col">Student ID</th>
+                <th scope="col">Date</th>
+                <th scope="col">Note</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{student.student_id_id}}</td>
+                <td>{{student.student_id_id}}</td>
+                <td>{{student.student_id_id}}</td>
+                <td>
+                    <a href=""><i class="bi bi-pencil-square"></i></a> ||
+                    <a href=""><i class="bi bi-trash3"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

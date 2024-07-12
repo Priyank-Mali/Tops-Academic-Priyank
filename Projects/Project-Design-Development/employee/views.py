@@ -1,7 +1,12 @@
 from django.shortcuts import render,redirect
 from functools import wraps
-from .models import Employee
+from .models import Employee,Batch,AssignBatch
 from django.contrib import messages
+
+from master.models import Technology
+
+from student.models import Student
+from student.forms import StudentForm
 
 
 # Create your views here.
@@ -83,7 +88,30 @@ def employee_login_view(request):
 # --------employee Dashboard view------------
 @login_required
 def employee_home_view(request):
-    return render(request,"employee/employee_dashboardpage.html")
+    batch_data = []
+    if request.COOKIES['role'] == 'counsellor':
+        batches = Batch.objects.all()
+        students = AssignBatch.objects.all()
+
+        for batch in batches:
+            total_student = 0
+            for student in students:
+                if (student.batch_id.faculty_id_id == batch.faculty_id_id )and (batch.technology_id == student.batch_id.technology_id ):
+                    total_student += 1
+                    logo = student.batch_id.technology_id.logo
+            batch_data.append({'batch' : batch , 'total_student' : total_student ,'logo' : logo })
+    
+    elif request.COOKIES['role'] == 'faculty':
+        batch = Batch.objects.get(faculty_id_id = request.COOKIES.get('employee_id'))
+        students = AssignBatch.objects.filter(batch_id_id = batch.batch_id).count()
+
+    context = {
+        'batches' : batch_data,
+        'students' : students,
+        'mybatch' : batch
+
+    }
+    return render(request,"employee/employee_dashboardpage.html",context)
 
 # --------employee Logout view------------
 @login_required
@@ -95,7 +123,7 @@ def employee_logout_view(request):
     messages.success(request,"You are Logged Out !!")
     return response
 
-# --------employee Change Password view------------
+# -------- employee Change Password view ------------
 @login_required
 def employee_change_password_view(request):
     get_employee = Employee.objects.get(employee_id=request.COOKIES.get("employee_id"))
@@ -127,10 +155,95 @@ def employee_change_password_view(request):
   
     return render(request,"employee/employee_changepassword.html",{})
 
+# ---------- employee / student list view ----------------------
 @login_required
 def employee_student_view(request):
-    return render(request,"employee/employee_studentpage.html",{})
+    students_objects = Student.objects.all().order_by("-created_at")
 
+    context = {
+        'students' : students_objects,
+        'student_form' : StudentForm()
 
+    }
+    return render(request,"employee/employee_studentpage.html",context)
+
+# ------------- employee profile details/change using model view -----------------------
+@login_required
 def employee_profile_view(request):
-    return render(request,"employee/employee_profilepage.html",{})
+    employee_object = Employee.objects.get(employee_id = request.COOKIES.get('employee_id'))
+    print(employee_object)
+    if request.method == 'POST':
+        first_name_ = request.POST.get('first_name')
+        last_name_ = request.POST.get('last_name')
+        mobile_ = request.POST.get('mobile')
+
+        employee_object.first_name = first_name_
+        employee_object.last_name = last_name_
+        employee_object.mobile = mobile_
+
+        employee_object.save()
+        response = redirect("employee_profile_view")
+        response.set_cookie('employee_name',f'{employee_object.first_name} {employee_object.last_name}')
+        messages.success(request,"Profile Changes Successfully")
+        return response
+
+    context = {
+        'employee' : employee_object
+    }
+    return render(request,"employee/employee_profilepage.html",context)
+
+# ----------------- student profile view ----------------------------------
+@login_required
+def student_profile_view(request,student_id):
+    student_object = Student.objects.get(student_id = student_id)
+
+    context = {
+        'student' : student_object,
+    }
+    return render(request,'employee/employee_studentdetailview.html',context)
+
+# ------------------- add student view ------------------------
+@login_required
+def add_student_view(request):
+    if request.method == "POST":
+        student_form = StudentForm(request.POST)
+        print(student_form)
+        if student_form.is_valid():
+            student_form.save()
+            messages.success(request,'student add successfully')
+            return redirect("employee_student_view")
+        else:
+            messages.error(request,'Invalid Form')
+            return redirect("employee_student_view")
+    return redirect("add_student_view")
+        
+
+def batch_view(request):
+    if request.COOKIES.get('role') == 'counsellor':
+        batches = Batch.objects.all()
+    elif request.COOKIES.get('role') == '':
+        get_employee = Employee.objects.get(faculty_id = request.COOKIES.get("employee_id"))
+        batches = Batch.objects.filter(faculty_id_id = get_employee.employee_id)
+    get_student = AssignBatch.objects.all()
+    context = {
+        'batches' : batches,
+        'students' : get_student
+    }
+    return render(request,"employee/employee_batch_view.html",context)
+
+
+def mybatch_view(request):
+    batch = Batch.objects.get(faculty_id_id = request.COOKIES.get('employee_id'))
+    students = AssignBatch.objects.filter(batch_id_id = batch.batch_id)
+
+    context = {
+        'batch' : batch,
+        'students' : students
+    }
+
+    return render(request,'employee/employee_mybatch.html',context)
+
+
+def batch_action_view(request,batch_id):
+    return render(request,"employee/employee_student_batch_action.html")
+

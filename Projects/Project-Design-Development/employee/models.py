@@ -3,7 +3,12 @@ from master.models import BaseModel
 from django.core.mail import send_mail
 import os
 
+from master.utils.TA_UNIQE.uniques_filename import generate_unique_filename
 from master.utils.TA_UNIQE.random_password import generate_random_password
+from .constants.gender import CHOICE_GENDER
+from master.models import Technology
+
+from student.models import Student
 
 # Create your models here.
 
@@ -70,3 +75,49 @@ class Employee(BaseModel):
         super(Employee,self).save(*args,**kwargs)
 
 
+
+class EmployeeProfile(BaseModel):
+    DIR_NAME = "employee_profile"
+    SUFFIX_WORD = 'empProfile'
+    employee_id = models.ForeignKey(Employee,on_delete=models.CASCADE)
+    profile_image = models.ImageField(upload_to=generate_unique_filename)
+    date_of_birth = models.DateField(blank=True,null=True)
+    gender = models.CharField(choices=CHOICE_GENDER,max_length=20,blank=True,null=True)
+
+
+
+class Batch(BaseModel):
+    PREFIX = 'BATCH'
+    batch_id = models.CharField(primary_key=True, blank=True, max_length=255)
+    batch_name = models.CharField(max_length=255, blank=True)
+    faculty_id = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    technology_id = models.ForeignKey(Technology, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+        return self.batch_name
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only set created_at on creation
+            last_batch = Batch.objects.order_by('-created_at').first()
+            if last_batch:
+                last_numeric_part = int(last_batch.batch_id[len(self.PREFIX):])
+                new_numeric_part = last_numeric_part + 1
+                new_id = f"{self.PREFIX}{new_numeric_part:04}" 
+            else:
+                new_id = f"{self.PREFIX}0001"
+
+            self.batch_id = new_id
+            self.batch_name = f"{self.batch_id}_{self.faculty_id.first_name}_{self.faculty_id.last_name}_{self.technology_id.name}"
+        
+        super(Batch, self).save(*args, **kwargs)
+
+
+class AssignBatch(BaseModel):
+    batch_id = models.ForeignKey(Batch, on_delete=models.CASCADE)
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return f"{self.batch_id.batch_id} {self.student_id} {self.student_id.first_name}"
