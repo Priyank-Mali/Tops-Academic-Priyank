@@ -22,7 +22,6 @@ def snippet_list(request):
     
 @api_view(['GET','PUT','DELETE'])
 def snippet_details(request,pk):
-
     try:
         snippetQueryset = Snippets.objects.get(pk=pk)
     except Snippets.DoesNotExist:
@@ -32,7 +31,6 @@ def snippet_details(request,pk):
         serializer = SnippetsSerializer(snippetQueryset)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
-    
     elif request.method=='PUT':
         serializer = SnippetsSerializer(snippetQueryset,data=request.data)
         if serializer.is_valid():
