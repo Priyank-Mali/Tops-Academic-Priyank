@@ -1,0 +1,5 @@
+list.append(x) : add an item at lasas a single element
+list.extend(x) : add as a content of that list
+list.insert(x,y) : insert item at a given position
+list.pop(x[-1]) : remove last element from the list
+list.remove(x) : removes that x from list

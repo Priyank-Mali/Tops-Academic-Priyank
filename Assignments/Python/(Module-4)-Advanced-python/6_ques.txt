@@ -1,0 +1,11 @@
+Advanced Python
+-> OOPS in Python
+-> Regular expressions
+-> CGI
+-> Database
+-> Networking
+-> Multithreading
+-> GUI Programming
+-> Designing
+-> Web Programming
+-> Connectivity with MySql

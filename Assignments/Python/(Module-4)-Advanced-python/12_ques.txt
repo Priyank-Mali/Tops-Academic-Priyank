@@ -1,0 +1,2 @@
+{'name': 'priyank', 'age': 99, 'contact': 123456}
+{'name': 'kalam', 'age': 88, 'contact': 987654}

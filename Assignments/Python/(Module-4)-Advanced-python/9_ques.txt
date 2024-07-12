@@ -1,0 +1,10 @@
+random.randrange(start, stop[, step]) 
+-> Return a randomly selected element
+   from range(start, stop, step). 
+   This is equivalent to choice(range(start, stop, step)),but does not actually build a range object.
+
+random.randint(a, b) 
+-> Return a random integer N such that a <= N <= b.
+
+random.choice(seq) 
+-> Return a random element from the non-empty sequence seq.

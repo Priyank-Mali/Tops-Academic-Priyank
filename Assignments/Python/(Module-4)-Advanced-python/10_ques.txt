@@ -1,0 +1,15 @@
+Python supports operator and function overloading.
+
+Method overloading
+-> Overloading is the ability to define the same method, with the same name
+   but with a different number of arguments and types.
+-> It's the ability of one function to perform different tasks, depending on the
+   number of parameters or the types of the parameters.
+
+Operator Overloading
+-> Python operators work for built-in classes.
+-> But same operator behaves differently with different types.
+-> For example, the + operator will, perform arithmetic addition on two
+numbers, merge two lists and concatenate two strings.
+-> This feature in Python, that allows same operator to have different meaning
+according to the context is called operator overloading.
