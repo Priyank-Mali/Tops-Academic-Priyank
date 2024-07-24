@@ -23,7 +23,7 @@ Student
         <td>{{student.email}}</td>
         <td>{{student.mobile}}</td>
         <td>
-            <a href="{% url "student_profile_view" student_id=student.student_id %}" class="text-dark"><i class="bi bi-eye"></i></a>
+            <a href="{% url "student_details_view" student_id=student.student_id %}" class="text-dark"><i class="bi bi-eye"></i></a>
         </td>
       </tr>
       {% endfor %}

@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from .utils.TA_UNIQE.uniques_filename import generate_unique_filename
 
+from decimal import Decimal
 # Create your models here.
 
 class BaseModel(models.Model):
@@ -26,7 +27,7 @@ class Technology(BaseModel):
     technology_id = models.CharField(primary_key=True, blank=True, max_length=255)
     name = models.CharField(max_length=255, blank=False, null=False)
     logo = models.ImageField(upload_to=generate_unique_filename, blank=True, null=True)
-    fees = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fees = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     
     
     def save(self, *args, **kwargs):

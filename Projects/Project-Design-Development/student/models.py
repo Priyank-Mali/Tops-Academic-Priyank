@@ -1,13 +1,18 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.contrib import messages
+
 from .constants.paymentchoice import PAYMENT_CHOICE
 from .constants.coursestatus import COURSE_STATUS
 
 from master.utils.TA_UNIQE.date_time import CURRENT_DATETIME
 from master.models import BaseModel
 from master.utils.TA_UNIQE.uniques_filename import generate_unique_filename
-
+from master.utils.TA_UNIQE.uniqueID import generate_unique_id
 from employee.constants.gender import CHOICE_GENDER
 from employee.models import Technology
+
+from decimal import Decimal
 # Create your models here.
 
 class Student(BaseModel):
@@ -48,7 +53,7 @@ class StudentProfile(BaseModel):
     date_of_birth = models.DateField(blank=False)
 
     def __str__(self):
-        return self.student_id
+        return self.student_id_id
 
 
 class studentAddress(BaseModel):
@@ -68,17 +73,54 @@ class StudentCourse(BaseModel):
     batch_status = models.CharField(choices=COURSE_STATUS,blank=False,max_length=20)
 
 
-# class StudentPayment(BaseModel):
-#     student_id = models.ForeignKey(Student,on_delete=models.CASCADE)
-#     technology_id = models.ForeignKey(Technology,on_delete=models.CASCADE)
-#     total_fees = models.DecimalField(max_digit=10,default=0.00,decimal_places=2)
-#     remaining_fees = models.DecimalField(max_digit=10,default=0.00,decimal_places=2)
-#     paid_fees = models.DecimalField(max_digit=10,default=0.00,decimal_places=2)
-#     status = models.CharField(choices=PAYMENT_CHOICE,default='I',max_length=10)
+class StudentPayment(BaseModel):
+    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
+    technology_id = models.ForeignKey(Technology, on_delete=models.CASCADE)
+    total_fees = models.DecimalField(max_digits=10, default=Decimal('0.00'), decimal_places=2)
+    remaining_fees = models.DecimalField(max_digits=10, default=Decimal('0.00'), decimal_places=2)
+    paid_fees = models.DecimalField(max_digits=10, default=Decimal('0.00'), decimal_places=2)
+    status = models.CharField(choices=PAYMENT_CHOICE, default='I', max_length=10)
 
-#     class Meta:
-#         unique_together = ("student_id","technology_id")
+    class Meta:
+        unique_together = ("student_id","technology_id")
 
-    # def save(self,*args,**kwargs):
-    #     if not self.pk:
-    #         if StudentPayment
+    def save(self,*args,**kwargs):
+
+        self.total_fees = self.technology_id.fees
+        self.remaining_fees = self.total_fees - self.paid_fees
+
+        super(StudentPayment,self).save(*args,**kwargs)
+
+
+class StudentPaymentEntry(BaseModel):
+    DIR_NAME = 'Student_Fees'
+    SUFFIX_WORD = 'stdFee'
+    payment_id = models.CharField(primary_key=True,max_length=255,blank=True)
+    student_id = models.ForeignKey(Student,on_delete=models.CASCADE)
+    proof = models.ImageField(upload_to=generate_unique_filename)
+    paid_date = models.DateField()
+    installment = models.DecimalField(max_digits=10,default=Decimal('0.00'),decimal_places=2)
+
+    def save(self,*args,**kwargs):
+        if not self.pk:
+            self.payment_id = generate_unique_id(self)
+            try:
+                student_fee_account = StudentPayment.objects.get(student_id_id = self.student_id_id)
+            except StudentPayment.DoesNotExist:
+                raise ValidationError("Data Not Found")
+            if self.installment != 0:
+                if self.installment <= student_fee_account.remaining_fees:
+                    student_fee_account.remaining_fees = student_fee_account.remaining_fees - self.installment
+                    student_fee_account.paid_fees  = student_fee_account.paid_fees + self.installment
+
+                    if student_fee_account.remaining_fees !=0:
+                        student_fee_account.status = 'P'
+                    else:
+                        student_fee_account.status = 'C'
+                    student_fee_account.save()
+
+                else:
+                    raise ValidationError("Payment installment must be less than remaining fees")
+            else:
+                raise ValidationError("Payment installment must be greater than 0")
+        super().save(*args,**kwargs)

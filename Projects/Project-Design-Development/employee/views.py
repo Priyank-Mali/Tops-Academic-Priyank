@@ -2,13 +2,16 @@ from django.shortcuts import render,redirect
 from functools import wraps
 from .models import Employee,Batch,AssignBatch
 from django.contrib import messages
+from django.urls import reverse
 
 from master.models import Technology
 
-from student.models import Student
+from student.models import Student,StudentProfile,studentAddress,StudentCourse,StudentPayment,StudentPaymentEntry
 from student.forms import StudentForm
 
+from .forms import StudentPaymentForm
 
+from decimal import Decimal
 # Create your views here.
 
 """
@@ -38,6 +41,7 @@ Returns:
 from functools import wraps
 from django.shortcuts import redirect
 
+# -------------------------- Decorater for authorization --------------------------
 def login_required(view_func):
     """
     Returns:
@@ -56,7 +60,7 @@ def login_required(view_func):
     # Return the wrapped view function
     return wrapped_view
 
-# --------employee login view------------
+# ----------------------- employee login view --------------------------
 def employee_login_view(request):
     if request.method=="POST":
         employee_id_ = request.POST["employee_id"]
@@ -85,7 +89,7 @@ def employee_login_view(request):
     return render(request,"employee/employee_loginpage.html")
 
 
-# --------employee Dashboard view------------
+# ------------------------employee Dashboard view ---------------------
 @login_required
 def employee_home_view(request):
     batch_data = []
@@ -113,7 +117,7 @@ def employee_home_view(request):
     }
     return render(request,"employee/employee_dashboardpage.html",context)
 
-# --------employee Logout view------------
+# ---------------------------- employee Logout view ---------------------
 @login_required
 def employee_logout_view(request):
     response = redirect("employee_login_view")
@@ -123,7 +127,7 @@ def employee_logout_view(request):
     messages.success(request,"You are Logged Out !!")
     return response
 
-# -------- employee Change Password view ------------
+# ----------------------- employee Change Password view ---------------------
 @login_required
 def employee_change_password_view(request):
     get_employee = Employee.objects.get(employee_id=request.COOKIES.get("employee_id"))
@@ -194,12 +198,68 @@ def employee_profile_view(request):
 
 # ----------------- student profile view ----------------------------------
 @login_required
-def student_profile_view(request,student_id):
-    student_object = Student.objects.get(student_id = student_id)
+def student_details_view(request,student_id):
+    
+    context = {}
 
-    context = {
-        'student' : student_object,
-    }
+    try:
+        student_object = Student.objects.get(student_id = student_id)
+        context["student"] = student_object
+    except Student.DoesNotExist:
+        context['student'] = {
+            "status_code" : 404,
+            "message" : "student data not found"
+        }
+    try:
+        student_profile = StudentProfile.objects.get(student_id_id = student_id)
+        context["student_profile"] = student_profile
+    except StudentProfile.DoesNotExist:
+        context["student_profile"] = {
+            "status_code" : 404,
+            "message" : "student Profile not found"
+        }
+    try:
+        student_address = studentAddress.objects.get(student_id_id = student_id)
+        context["student_address"] = student_address
+    except studentAddress.DoesNotExist:
+        context['student_address'] = {
+            "status_code" : 404,
+            "message" : "Student Address Not Found"
+        }
+
+    try:
+        student_course = StudentCourse.objects.get(student_id_id = student_id)
+        context['student_course'] = student_course
+    except StudentCourse.DoesNotExist:
+        context["student_course"] = {
+            "status_code" : 404,
+            "message" : "Student Course Not Found"
+        }
+    try:
+        student_payment = StudentPayment.objects.get(student_id_id = student_id)
+        context['student_payment']  = student_payment
+    except StudentPayment.DoesNotExist:
+        context["student_payment"] = {
+            "status_code" : 404,
+            "message" : "Student Payment Entry Not Found"
+        }
+    
+    try:
+        student_payment_entry = StudentPaymentEntry.objects.filter(student_id_id = student_id)
+        context['student_payment_entry'] = student_payment_entry
+    except StudentPaymentEntry.DoesNotExist:
+        context['student_payment_entry'] = {
+            "status_code" : 404
+        }
+    
+    # form = StudentPaymentForm()
+    # context['paymentform'] = form
+
+    # context = {
+    #     'student' : student_object,
+    #     'student_profile' : student_profile,
+    #     # 'student_address' : student_address,
+    # }
     return render(request,'employee/employee_studentdetailview.html',context)
 
 # ------------------- add student view ------------------------
@@ -217,7 +277,8 @@ def add_student_view(request):
             return redirect("employee_student_view")
     return redirect("add_student_view")
         
-
+# -------------------- batch View ----------------------------------
+@login_required
 def batch_view(request):
     if request.COOKIES.get('role') == 'counsellor':
         batches = Batch.objects.all()
@@ -231,7 +292,8 @@ def batch_view(request):
     }
     return render(request,"employee/employee_batch_view.html",context)
 
-
+# -------------------- employee specific Batch View -----------------------------
+@login_required
 def mybatch_view(request):
     batch = Batch.objects.get(faculty_id_id = request.COOKIES.get('employee_id'))
     students = AssignBatch.objects.filter(batch_id_id = batch.batch_id)
@@ -243,7 +305,30 @@ def mybatch_view(request):
 
     return render(request,'employee/employee_mybatch.html',context)
 
-
+# --------------------- Batch Action View ------------------------------------------
+@login_required
 def batch_action_view(request,batch_id):
     return render(request,"employee/employee_student_batch_action.html")
 
+# ----------------------- student payment entry -----------------------------
+@login_required
+def student_payment_entry_view(request):
+    if request.method=='POST':
+        student_id_ = request.POST.get('student_id')
+        proof_ = request.FILES.get('proof')
+        paid_date_ = request.POST.get('paid_date')
+        installment_ = request.POST.get('installment')
+
+        student_payment_object = StudentPayment.objects.get(student_id_id=student_id_)
+        if Decimal(installment_) > student_payment_object.remaining_fees:
+            messages.error(request,"payment should be less or equal to remaining fees")
+        
+        StudentPaymentEntry.objects.create(
+            student_id_id = student_id_,
+            proof = proof_,
+            paid_date = paid_date_,
+            installment = Decimal(installment_)
+        )
+        messages.success(request,f"{installment_} Rs. Payment Added to {student_id_} Account")
+        return redirect(reverse("student_details_view" ,args=[student_id_]))
+    
