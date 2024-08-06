@@ -90,7 +90,6 @@ def globaleNotesDetails(request,note_id):
 @api_view()
 def studentGlobaleNote(request,student_id):
     queryset = globalNote.objects.filter(student_id=student_id)
-    print(queryset)
     if request.method=="GET":
         if queryset:
             serializer = GlobalNoteSeralizer(queryset,many=True)
