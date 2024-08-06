@@ -12,6 +12,8 @@ from student.forms import StudentForm
 from .forms import StudentPaymentForm
 
 from decimal import Decimal
+
+import requests
 # Create your views here.
 
 """
@@ -297,10 +299,21 @@ def batch_view(request):
 def mybatch_view(request):
     batch = Batch.objects.get(faculty_id_id = request.COOKIES.get('employee_id'))
     students = AssignBatch.objects.filter(batch_id_id = batch.batch_id)
-
+   
+    batch_student_note = []
+    for student in students:
+        url = f"http://127.0.0.1:2000/student/{student.student_id_id}/"
+        response = requests.get(url)
+        if response.status_code == 200:
+            json_data = response.json()
+            for single_data in json_data["payload"]:
+                batch_student_note.append(single_data)
+    print(batch_student_note)
+    # sorted_notes_data = sorted(batch_student_note, key=lambda x: x['created_at'])
+    # print(sorted_notes_data)
     context = {
         'batch' : batch,
-        'students' : students
+        'students' : students,
     }
 
     return render(request,'employee/employee_mybatch.html',context)
@@ -331,4 +344,33 @@ def student_payment_entry_view(request):
         )
         messages.success(request,f"{installment_} Rs. Payment Added to {student_id_} Account")
         return redirect(reverse("student_details_view" ,args=[student_id_]))
+    
+
+# -------------------------------- add global note ----------------------------
+def add_global_note(request):
+    if request.method == "POST":
+        student_id_ = request.POST.get("student_id")
+        comment_ = request.POST.get("comment")
+
+        jsondata = {
+            "student_id" : student_id_,
+            "comment" : comment_
+        }
+        url = "http://127.0.0.1:2000/students/"
+        response = requests.post(url,data=jsondata)
+        print(response)
+        if response.status_code == 200:
+            response_data = response.json()
+            print(response_data)
+            if response_data.get("status_code")==201:
+                messages.success(request,"global note added successfully.")
+            else:
+                print(response_data.get("error"))
+                messages.error(request,str(response_data.get("error")))
+        else:
+            messages.error(request,"something went wrong")
+ 
+    return redirect("mybatch_view")
+    
+
     

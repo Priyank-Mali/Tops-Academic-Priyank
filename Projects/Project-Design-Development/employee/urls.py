@@ -14,5 +14,6 @@ urlpatterns = [
     path("batch-action/<str:batch_id>/",views.batch_action_view,name="batch_action_view"),
     path("mybatch/",views.mybatch_view,name="mybatch_view"),
     path("student-payment-entry/",views.student_payment_entry_view,name="student_payment_entry_view"),
+    path("add-global-note/",views.add_global_note,name="add_global_note"),
 
 ]

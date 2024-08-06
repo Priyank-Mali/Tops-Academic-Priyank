@@ -5,84 +5,100 @@ from rest_framework.response import Response
 from rest_framework import status
 
 @api_view(['GET','POST'])
-def studentList(request):
+def globaleNotesList(request):
     try:
         if request.method=="GET":
             queryset = globalNote.objects.all()
             serializer = GlobalNoteSeralizer(queryset,many=True)
-            return Response({
-                "status_code" : status.HTTP_200_OK,
-                "payload" : serializer.data
-            })
+            data = {
+                "data" : serializer.data
+            }
+            return Response(data,status=status.HTTP_200_OK)
         elif request.method=="POST":
             jsondata = request.data
             serializer = GlobalNoteSeralizer(data=jsondata)
             if serializer.is_valid():
                 serializer.save()
-                return Response({
-                    "status_code" : status.HTTP_201_CREATED,
-                    "payload" : serializer.data
-                })
+                data = {
+                    "data" : serializer.data
+                }
+                return Response(data,status=status.HTTP_201_CREATED)
             else:
-                return Response({
-                    "status_code" : status.HTTP_400_BAD_REQUEST,
+                data = {
                     "error" : serializer.errors
-                })
+                }
+                return Response(data,status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        return Response({
-            "status_code" : status.HTTP_400_BAD_REQUEST,
+        data = {
             "error" : str(e)
-        })
+        }
+        return Response(data,status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET','PUT','PATCH','DELETE'])
-def studentDetails(request,student_id):
+def globaleNotesDetails(request,note_id):
     try:
-        queryset = globalNote.objects.get(student_id = student_id)
+        queryset = globalNote.objects.get(id=note_id)
     except globalNote.DoesNotExist:
-        return Response({
-            "status_code" : status.HTTP_204_NO_CONTENT,
-            "message" : "Student Not Exists"
-        })
+        data = {
+            "error" : "Note Not Found"
+        }
+        return Response(data,status.HTTP_204_NO_CONTENT)
     if request.method=="GET":
-        serializer = GlobalNoteSeralizer(instance=queryset)
-        return Response({
-            "status_code" : status.HTTP_200_OK,
-            "payload" : serializer.data
-        })
+        serializer = GlobalNoteSeralizer(queryset)
+        data = {
+            "data" : serializer.data
+        }
+        return Response(data,status.HTTP_200_OK)
     elif request.method=="PUT":
         jsondata = request.data
         serializer = GlobalNoteSeralizer(instance=queryset,data=jsondata)
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                "status_code" : status.HTTP_202_ACCEPTED,
-                "payload" : serializer.data,
-                "message" : "Student Comment Change Successfully (All)"
-            })
+            data = {
+                "data" : serializer.data,
+                "message" : "Student Comment Change Successfully (All Data)"
+            }
+            return Response(data,status.HTTP_202_ACCEPTED)
         else:
-            return Response({
-                "status_code" : status.HTTP_400_BAD_REQUEST,
+            data = {
                 "error" : serializer.errors
-            })
+            }
+            return Response(data,status.HTTP_400_BAD_REQUEST)
         
     elif request.method=="PATCH":
         jsondata = request.data
         serializer = GlobalNoteSeralizer(instance=queryset,data=jsondata,partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response({
-                "status_code" : status.HTTP_202_ACCEPTED,
-                "payload" : serializer.data,
-                "message" : "Student Comment Change Successfully (Partially)"
-            })
+            data = {
+                "data" : serializer.data,
+                "message" : "Student Comment Change Successfully (Partially Change)"
+            }
+            return Response(data,status.HTTP_202_ACCEPTED)
         else:
-            return Response({
-                "status_code" : status.HTTP_400_BAD_REQUEST,
+            data = {
                 "error" : serializer.errors
-            })
+            }
+            return Response(data,status.HTTP_400_BAD_REQUEST)
     else:
         queryset.delete()
-        return Response({
-            "status_code" : status.HTTP_410_GONE,
+        data = {
             "message" : "Comment Deleted Successfully"
-        })
+        }
+        return Response(data,status.HTTP_410_GONE)
+    
+@api_view()
+def studentGlobaleNote(request,student_id):
+    queryset = globalNote.objects.filter(student_id=student_id).exists()
+    if not queryset:
+        data = {
+            "error" : "Note Not Found"
+        }
+        return Response(data,status=status.HTTP_400_BAD_REQUEST)
+    if request.method=="GET":
+        serializer = GlobalNoteSeralizer(queryset,many=True)
+        data = {
+            "data" : serializer.data
+        }
+        return Response(data,status=status.HTTP_200_OK)
+    

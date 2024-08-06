@@ -4,4 +4,4 @@ from .models import globalNote
 class GlobalNoteSeralizer(serializers.ModelSerializer):
     class Meta:
         model = globalNote
-        fields = ['student_id' , 'comment']
+        fields = "__all__"
