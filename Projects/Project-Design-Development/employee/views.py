@@ -177,7 +177,6 @@ def employee_student_view(request):
 @login_required
 def employee_profile_view(request):
     employee_object = Employee.objects.get(employee_id = request.COOKIES.get('employee_id'))
-    print(employee_object)
     if request.method == 'POST':
         first_name_ = request.POST.get('first_name')
         last_name_ = request.POST.get('last_name')
@@ -260,7 +259,6 @@ def student_details_view(request,student_id):
 def add_student_view(request):
     if request.method == "POST":
         student_form = StudentForm(request.POST)
-        print(student_form)
         if student_form.is_valid():
             student_form.save()
             messages.success(request,'student add successfully')
@@ -295,7 +293,6 @@ def mybatch_view(request):
         url = f"http://127.0.0.1:2000/student/{student.student_id_id}/"
         response = requests.get(url)
         if response.status_code==200:
-            # print(response.json())
             for data in response.json()["data"]:
                 batch_stundent_notes.append(data)
 
@@ -314,9 +311,18 @@ def mybatch_view(request):
 def batch_action_view(request,batch_id):
     batch = Batch.objects.get(batch_id = batch_id)
     students = AssignBatch.objects.filter(batch_id = batch_id)
+    url = "http://127.0.0.1:2000/notes/"
+    response = requests.get(url)
+    notes = {}
+    for data in response.json()["data"]:  
+        student_id = data["student_id"]
+        if student_id not in notes:
+            notes[student_id] = []
+            notes[student_id].append(data["comment"])   
     context = {
         "batch" : batch,
-        "students" : students
+        "students" : students,
+        "notes" : notes
     }
     return render(request,"employee/employee_student_batch_action.html",context)
 
@@ -344,6 +350,7 @@ def student_payment_entry_view(request):
     
 
 # -------------------------------- add global note ----------------------------
+@login_required
 def add_global_note(request):
     if request.method == "POST":
         student_id_ = request.POST.get("student_id")
@@ -365,7 +372,7 @@ def add_global_note(request):
 
 
 # -------------------------------- update global note ----------------------------
-
+@login_required
 def update_global_note(request):
     if request.method=="POST":
         note_id_ = request.POST.get("note_id")
@@ -375,16 +382,14 @@ def update_global_note(request):
             "comment" : comment_
         }
         response = requests.patch(url,data=data)
-        # print(response)
         if response.status_code==202:
-            print()
             messages.success(request,f"Global Note Updated Successfully of {response.json()["data"]["student_id"]}")
         else:
             messages.error(request,f"{response.json()["error"]}")
     return redirect("mybatch_view")
 
 # -------------------------------- delete global note ----------------------------
-
+@login_required
 def delete_global_note(request,note_id):
     url = f"http://127.0.0.1:2000/note/{note_id}/"
     response = requests.delete(url)

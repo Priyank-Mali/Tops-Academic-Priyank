@@ -17,21 +17,25 @@ Batch-Action-View
       </tr>
     </thead>
     <tbody>
+    {% for student in students %}
     <tr>
-        <td rowspan="{{ students|length }}">{{ batch.batch_name }}</td>
-        <td rowspan="{{ students|length }}">{{ batch.start_date }}</td>
-        <td rowspan="{{ students|length }}">{{ batch.end_date }}</td>
+        <td>{{ batch.batch_name }}</td>
+        <td>{{ batch.start_date }}</td>
+        <td>{{ batch.end_date }}</td>
+        <td>{{student.student_id.first_name|capfirst}} {{student.student_id.last_name|capfirst}}</td>
         <td>
-        <ul>
-            {% for student in students %}
-                {% if batch.batch_id == student.batch_id.batch_id %}
-                    <li>{{ student.student_id.first_name }} {{ student.student_id.last_name }}</li>
-                {% endif %}
+          {% if student.student_id_id in notes %}
+            {% for student_id,comment in notes.items %}
+              {% if student_id == student.student_id_id %}
+                <span class="text-primary fw-bold">{{comment}}</span>
+              {% endif %}
             {% endfor %}
-        </ul>
+          {% else %}
+            <span class="text-danger">No notes available</span>
+          {% endif %}
         </td>
-        <td rowspan="{{ students|length }}">Note</td>
-    </tr>
+        </tr>
+    {% endfor %}
     </tbody>
   </table>
 </div>
