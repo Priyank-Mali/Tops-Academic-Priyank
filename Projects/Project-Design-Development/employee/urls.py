@@ -15,5 +15,7 @@ urlpatterns = [
     path("mybatch/",views.mybatch_view,name="mybatch_view"),
     path("student-payment-entry/",views.student_payment_entry_view,name="student_payment_entry_view"),
     path("add-global-note/",views.add_global_note,name="add_global_note"),
+    path("update-global-note/",views.update_global_note,name="update_global_note"),
+    path("delete-global-note/<int:note_id>/",views.delete_global_note,name="delete_global_note"),
 
 ]

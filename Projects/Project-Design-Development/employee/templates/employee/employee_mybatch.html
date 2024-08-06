@@ -5,7 +5,6 @@ MyBatch
 {% endblock %}
 
 {% block content %}
-
 <div class="container my-3">
     <table class="table table-dark">
         <thead>
@@ -69,8 +68,8 @@ MyBatch
             </div>
         </div>
     </div>
-    <p class="text-danger">Global Notes:</p>
-    <table class="table">
+    <p class="text-primary fw-bold">Global Notes:</p>
+    <table class="table table-striped table-hover">
         <thead class="bg-dark text-white">
             <tr>
                 <th scope="col">Student ID</th>
@@ -80,17 +79,29 @@ MyBatch
             </tr>
         </thead>
         <tbody>
-            {% for student in students %}
-            <tr>
-                <td>{{student.student_id_id}}</td>
-                <td>{{student.student_id_id}}</td>
-                <td>comment</td>
-                <td>
-                    <a href=""><i class="bi bi-pencil-square"></i></a> ||
-                    <a href=""><i class="bi bi-trash3"></i></a>
-                </td>
-            </tr>
-            {% endfor %}
+            {% if batch_notes|length != 0  %}
+                {% for note in batch_notes %}
+                <tr>
+                    <td>{{note.student_id}}</td>
+                    <td>{{note.created_at}}</td>
+                    <form action="{% url "update_global_note" %}" method="post">
+                        {% csrf_token %}
+                        <td>
+                            <input type="hidden" name="note_id" id="" value="{{note.id}}">
+                            <input type="text" name="comment" id="" value="{{note.comment}}">
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-info"><i class="bi bi-pencil-square"></i></button> 
+                                <a href="{% url "delete_global_note" note_id=note.id %}" class="btn btn-danger">
+                                    <i class="bi bi-trash3"></i>
+                                </a>
+                        </td>
+                    </form>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <td colspan="4" class="text-center text-danger fw-bold">Note Not Found</td>
+            {% endif %}
         </tbody>
     </table>
 </div>

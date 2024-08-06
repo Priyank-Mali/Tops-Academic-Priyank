@@ -85,20 +85,27 @@ def globaleNotesDetails(request,note_id):
         data = {
             "message" : "Comment Deleted Successfully"
         }
-        return Response(data,status.HTTP_410_GONE)
+        return Response(data,status.HTTP_204_NO_CONTENT)
     
 @api_view()
 def studentGlobaleNote(request,student_id):
-    queryset = globalNote.objects.filter(student_id=student_id).exists()
-    if not queryset:
+    queryset = globalNote.objects.filter(student_id=student_id)
+    print(queryset)
+    if request.method=="GET":
+        if queryset:
+            serializer = GlobalNoteSeralizer(queryset,many=True)
+            data = {
+                "data" : serializer.data
+            }
+            return Response(data,status=status.HTTP_200_OK)
+        else:
+            data = {
+                "error" : "Note Not Found"
+            }
+            return Response(data,status=status.HTTP_400_BAD_REQUEST)
+    else:
         data = {
-            "error" : "Note Not Found"
+            "error" : "Something Went Wrong"
         }
         return Response(data,status=status.HTTP_400_BAD_REQUEST)
-    if request.method=="GET":
-        serializer = GlobalNoteSeralizer(queryset,many=True)
-        data = {
-            "data" : serializer.data
-        }
-        return Response(data,status=status.HTTP_200_OK)
-    
+            

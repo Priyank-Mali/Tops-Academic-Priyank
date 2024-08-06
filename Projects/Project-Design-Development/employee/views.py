@@ -253,15 +253,6 @@ def student_details_view(request,student_id):
         context['student_payment_entry'] = {
             "status_code" : 404
         }
-    
-    # form = StudentPaymentForm()
-    # context['paymentform'] = form
-
-    # context = {
-    #     'student' : student_object,
-    #     'student_profile' : student_profile,
-    #     # 'student_address' : student_address,
-    # }
     return render(request,'employee/employee_studentdetailview.html',context)
 
 # ------------------- add student view ------------------------
@@ -299,21 +290,21 @@ def batch_view(request):
 def mybatch_view(request):
     batch = Batch.objects.get(faculty_id_id = request.COOKIES.get('employee_id'))
     students = AssignBatch.objects.filter(batch_id_id = batch.batch_id)
-   
-    batch_student_note = []
+    batch_stundent_notes = []
     for student in students:
         url = f"http://127.0.0.1:2000/student/{student.student_id_id}/"
         response = requests.get(url)
-        if response.status_code == 200:
-            json_data = response.json()
-            for single_data in json_data["payload"]:
-                batch_student_note.append(single_data)
-    print(batch_student_note)
-    # sorted_notes_data = sorted(batch_student_note, key=lambda x: x['created_at'])
-    # print(sorted_notes_data)
+        if response.status_code==200:
+            # print(response.json())
+            for data in response.json()["data"]:
+                batch_stundent_notes.append(data)
+
+    sorted_notes = sorted(batch_stundent_notes,key=lambda x:x['created_at'])[::-1]
+
     context = {
         'batch' : batch,
         'students' : students,
+        'batch_notes' : sorted_notes
     }
 
     return render(request,'employee/employee_mybatch.html',context)
@@ -321,7 +312,13 @@ def mybatch_view(request):
 # --------------------- Batch Action View ------------------------------------------
 @login_required
 def batch_action_view(request,batch_id):
-    return render(request,"employee/employee_student_batch_action.html")
+    batch = Batch.objects.get(batch_id = batch_id)
+    students = AssignBatch.objects.filter(batch_id = batch_id)
+    context = {
+        "batch" : batch,
+        "students" : students
+    }
+    return render(request,"employee/employee_student_batch_action.html",context)
 
 # ----------------------- student payment entry -----------------------------
 @login_required
@@ -352,25 +349,48 @@ def add_global_note(request):
         student_id_ = request.POST.get("student_id")
         comment_ = request.POST.get("comment")
 
-        jsondata = {
+        data = {
             "student_id" : student_id_,
             "comment" : comment_
         }
-        url = "http://127.0.0.1:2000/students/"
-        response = requests.post(url,data=jsondata)
-        print(response)
-        if response.status_code == 200:
+        url = "http://127.0.0.1:2000/notes/"
+        response = requests.post(url,data=data)
+        if response.status_code == 201:
             response_data = response.json()
-            print(response_data)
-            if response_data.get("status_code")==201:
-                messages.success(request,"global note added successfully.")
-            else:
-                print(response_data.get("error"))
-                messages.error(request,str(response_data.get("error")))
+            messages.success(request,f"global note added successfully for {response_data["data"]["student_id"]}")
         else:
-            messages.error(request,"something went wrong")
- 
-    return redirect("mybatch_view")
-    
+            messages.error(request,response.json()["error"])
 
+    return redirect("mybatch_view")
+
+
+# -------------------------------- update global note ----------------------------
+
+def update_global_note(request):
+    if request.method=="POST":
+        note_id_ = request.POST.get("note_id")
+        comment_ = request.POST.get("comment")
+        url = f"http://127.0.0.1:2000/note/{note_id_}/"
+        data = {
+            "comment" : comment_
+        }
+        response = requests.patch(url,data=data)
+        # print(response)
+        if response.status_code==202:
+            print()
+            messages.success(request,f"Global Note Updated Successfully of {response.json()["data"]["student_id"]}")
+        else:
+            messages.error(request,f"{response.json()["error"]}")
+    return redirect("mybatch_view")
+
+# -------------------------------- delete global note ----------------------------
+
+def delete_global_note(request,note_id):
+    url = f"http://127.0.0.1:2000/note/{note_id}/"
+    response = requests.delete(url)
+    if response.status_code==204:
+        messages.success(request,"Global Note Deleted Successfully")
+    else:
+        messages.error(request,response.json()["error"])
     
+    return redirect("mybatch_view")
