@@ -18,7 +18,7 @@
 3] What are void elements in HTML?
 
     --> Void elements are basically that element that do not have closing tags and cannot have any child elements or content.
-    Bsically self-closing tags.
+    Basically self-closing tags.
     Ex,.. <img>,<br>,<hr> 
 4] What are HTML Entities?
 
