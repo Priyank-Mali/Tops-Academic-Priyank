@@ -1,8 +1,11 @@
 1] Are the HTML tags and elements the same thing?
 
     --> No,HTML tags and elements are not same.
-    Tag : is a part of HTML syntax used to   create HTML element.Ex,.. <br>, <p>
-    Element : is a combination of opening tag and its content and the closing tag.Ex,..<p>My Name is Priyank</p>
+    --> Tag : is a part of HTML syntax used to   create HTML element.
+    Ex,.. <br>, <p>
+    
+    --> Element : is a combination of opening tag and its content and the closing tag.
+    Ex,..<p>My Name is Priyank</p>
 
 2] What are tags and attributes in HTML?
 
@@ -109,5 +112,5 @@
 20] What are logical and physical tags in HTML? 
 
     --> Logical Tags: These tags do not describe the visual appearance but the logical structure or meaning of the text (e.g., <em> for emphasis, <strong> for strong importance).
-    
+
     --> Physical Tags: These tags describe the physical appearance of the text (e.g., <b> for bold, <i> for italic).
