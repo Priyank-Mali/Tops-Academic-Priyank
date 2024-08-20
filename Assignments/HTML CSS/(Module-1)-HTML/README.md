@@ -9,7 +9,8 @@
 
 2] What are tags and attributes in HTML?
 
-    --> Tags : are the basic building block for HTML.They are used to create elements in HTML document.Ex,.. <div>, <a>
+    --> Tags : are the basic building block for HTML.They are used to create elements in HTML document.
+    Ex,.. <div>, <a>
 
     --> Attributes : provides additionl information about an element.
     Ex,.. <a herf="https://www.google.com">Open Google</a>
