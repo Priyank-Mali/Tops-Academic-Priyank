@@ -18,7 +18,8 @@
 3] What are void elements in HTML?
 
     --> Void elements are basically that element that do not have closing tags and cannot have any child elements or content.
-    Bsically self-closing tags.Ex,.. <img>,<br>,<hr> 
+    Bsically self-closing tags.
+    Ex,.. <img>,<br>,<hr> 
 4] What are HTML Entities?
 
     --> HTML entities are used to represent characters that have special meanings in HTML (like <, >, &, etc.)cannot showd in HTML page directly
