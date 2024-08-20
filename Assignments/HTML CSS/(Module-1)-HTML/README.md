@@ -1,9 +1,9 @@
 1] Are the HTML tags and elements the same thing?
 
     --> No,HTML tags and elements are not same.
-    --> Tag : is a part of HTML syntax used to   create HTML element.
+    --> Tag : is a part of HTML syntax used to create HTML element.
     Ex,.. <br>, <p>
-    
+
     --> Element : is a combination of opening tag and its content and the closing tag.
     Ex,..<p>My Name is Priyank</p>
 
