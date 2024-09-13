@@ -69,7 +69,11 @@
 
 10] Why should background and color be used as separate properties?
 
-    --> 
+    --> background: property used to define the background of an element, including the background color, image, position, and repeat behavior.
+
+    --> color: property is specifically for setting the color of the text or content within an element.
+    
+    For example, you might want to change the text color without affecting the background or vice versa.
 
 11] How to center block elements using CSS1?
 
@@ -105,16 +109,35 @@
 
 16] What are the advantages and disadvantages of using external style sheets?
 
-    --> 
+    --> Advatages:
+    * Easy to maintain and update
+    * Faster page loading due to browser caching.
+
+    --> Disadvantage
+    * Requires additional HTTP requests.
+    * Slight delay in rendering as the external file needs to be loaded.
 
 17] What is the meaning of the CSS selector?
 
-    --> 
+    --> Selectors used to target and apply styles to specific HTML elements. 
+    --> Example: p selects all <p> elements, .class-name selects elements with the specified class.
 
 18] What are the media types allowed by CSS?
 
-    --> 
+    --> Screen  : (for devices with screen)
+    --> Print   : (for printed materials)
+    --> Speech  : (for screen readers)
+    --> All     
 
 19] What is the rule set? 
 
-    --> 
+    --> CSS rule set contains one or more selectors and one or more declarations.
+
+    <p>Hello World</p>
+
+    p{
+        color: green;
+        background-color: yellow;
+        font-size: 14px;
+        border: 1px solid black;
+    }

@@ -1,0 +1,62 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #d5d8dc ;
+}
+
+.container{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap:10px;
+    padding: 15px;
+    width: 90%;
+    margin: 20px auto;
+    background-color: #ecf0f1 ;
+}
+
+.grid{
+    padding: 10px;
+}
+
+.first{
+    background-color: rgb(98, 97, 97);
+    height: 100px;
+    width: 100%;
+    display: grid;
+    place-content: center;
+}
+
+.first p{
+    font-size: 30px;
+    color: aliceblue;
+}
+
+.second {
+    padding: 10px;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+}
+
+.third{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.third .btn button{
+    margin: unset;
+    border: 1px solid black;
+    padding: 10px 20px;
+}
+.third .btn button:nth-child(2){
+    margin-left: -5px;
+}
+
+.grid .white{
+    background-color: white;
+}
