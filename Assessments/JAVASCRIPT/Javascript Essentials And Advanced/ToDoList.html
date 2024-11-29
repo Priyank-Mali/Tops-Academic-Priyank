@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoList</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"/>
+</head>
+<body>
+    <div class="container">
+        <div class="main">
+            <h2>TODO LIST</h2>
+            <div class="input-div">
+                <input type="text" name="" id="task">
+                <button class="btn" id="addtask">Add</button>
+            </div>
+
+            <div class="my-task">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("addtask").addEventListener("click",function(){
+            let taskInput = document.getElementById("task")
+            let taskList = document.querySelector(".my-task")
+            if(taskInput.value){
+                let parent = document.createElement("div");
+                let child1 = document.createElement("p")
+                child1.append(taskInput.value)
+                let removeButton = document.createElement("button")
+                removeButton.innerHTML = `<i class="fa-solid fa-xmark"></i>`
+                parent.appendChild(child1)
+                parent.appendChild(removeButton)
+                taskList.appendChild(parent)
+                task.value = ""
+
+                removeButton.addEventListener("click",function(){
+                    parent.remove()
+                })
+            } else {
+                alert("Enter Task !!!")
+            }
+        })
+    </script>
+</body>
+</html>

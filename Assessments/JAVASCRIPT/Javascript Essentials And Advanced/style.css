@@ -1,0 +1,82 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: black;
+  letter-spacing: 1px;
+}
+
+:focus-visible {
+  outline: none;
+}
+
+.btn {
+  background-color: orange;
+  border: none;
+  border: 1px solid orange;
+  padding: 10px 14px;
+  color: black;
+  border-radius: 6px;
+}
+
+button:active {
+  scale: 0.9;
+}
+
+.container {
+  text-align: center;
+}
+.container .main {
+  padding: 0 20px;
+  margin: 100px auto;
+  width: -moz-fit-content;
+  width: fit-content;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.container .main h2 {
+  background: linear-gradient(lime, white);
+  color: transparent;
+  -webkit-background-clip: text;
+  margin: 10px;
+}
+.container .main .input-div {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+.container .main .input-div input {
+  padding: 10px;
+  flex: 1;
+  font-size: 17px;
+  border-radius: 7px;
+  border: none;
+  letter-spacing: 1px;
+}
+.container .main .my-task {
+  margin: 10px 0;
+  background-color: white;
+  border-radius: 7px;
+}
+.container .main .my-task div {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px;
+  padding: 5px;
+}
+.container .main .my-task div p {
+  font-size: 17px;
+}
+.container .main .my-task div button {
+  padding: 4px;
+  background-color: transparent;
+  border: none;
+  color: red;
+  font-size: 16px;
+}
+.container .main .my-task div button:active {
+  transform: rotate(30deg);
+}/*# sourceMappingURL=style.css.map */
